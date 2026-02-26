@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeFlow - Smart Time & Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+   <script src="script.js"></script>
+    
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">⚡ TimeFlow</div>
+            
+            <!-- Navigation Menu -->
+            <nav class="main-nav">
+                <a href="#timer-section" class="nav-link">
+                    <span class="nav-icon">⏱️</span>
+                    <span class="nav-text">Timer</span>
+                </a>
+                <a href="#tasks-section" class="nav-link">
+                    <span class="nav-icon">✅</span>
+                    <span class="nav-text">Tasks</span>
+                </a>
+                <a href="#mindmap-section" class="nav-link">
+                    <span class="nav-icon">🧠</span>
+                    <span class="nav-text">Mind Map</span>
+                </a>
+                <a href="#stats-section" class="nav-link">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Stats</span>
+                </a>
+            </nav>
+            
+            <div>
+                <div class="current-time" id="currentTime">00:00:00</div>
+                <div class="current-date" id="currentDate">Loading...</div>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="main-grid" id="timer-section">
+            <!-- Left Column: Timer -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">⏱️ Time Tracker</h2>
+                    </div>
+
+                    <div class="timer-presets">
+                        <button class="preset-btn" onclick="setTimer(25)">Pomodoro<br>25 min</button>
+                        <button class="preset-btn" onclick="setTimer(5)">Short Break<br>5 min</button>
+                        <button class="preset-btn" onclick="setTimer(15)">Long Break<br>15 min</button>
+                    </div>
+
+                    <div class="timer-display" id="timerDisplay">
+                        <div class="timer-value" id="timerValue">00:00</div>
+                        <div class="timer-label" id="timerLabel">Ready to start</div>
+                    </div>
+
+                    <div class="timer-controls">
+                        <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">Start</button>
+                        <button class="btn btn-secondary" onclick="resetTimer()">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="card" id="stats-section" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h2 class="card-title">📊 Today's Stats</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="completedCount">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="pendingCount">0</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Tasks -->
+            <div class="card" id="tasks-section">
+                <div class="card-header">
+                    <h2 class="card-title">✅ Task Manager</h2>
+                </div>
+
+                <div class="task-input-wrapper">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <select class="task-input" id="taskCategory" style="width: auto; flex: 0 0 150px;">
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="study">Study</option>
+                        </select>
+                        <input 
+                            type="text" 
+                            class="task-input" 
+                            id="taskInput" 
+                            placeholder="What needs to be done?"
+                            onkeypress="handleTaskInput(event)"
+                            style="flex: 1; margin: 0;"
+                        >
+                    </div>
+                </div>
+
+                <div class="task-categories">
+                    <div class="category-chip active" data-category="all" onclick="filterTasks('all')">All</div>
+                    <div class="category-chip" data-category="work" onclick="filterTasks('work')">Work</div>
+                    <div class="category-chip" data-category="personal" onclick="filterTasks('personal')">Personal</div>
+                    <div class="category-chip" data-category="urgent" onclick="filterTasks('urgent')">Urgent</div>
+                    <div class="category-chip" data-category="study" onclick="filterTasks('study')">Study</div>
+                </div>
+
+                <div class="task-list" id="taskList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <div class="empty-state-text">No tasks yet. Add one to get started!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mind Map Section -->
+        <div class="card" id="mindmap-section" style="margin-top: 2rem;">
+            <div class="card-header">
+                <h2 class="card-title">🧠 Mind Map Canvas</h2>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="addMindMapNode()">+ Add Idea</button>
+                    <button class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="clearMindMap()">Clear All</button>
+                </div>
+            </div>
+
+            <!-- Main Idea Customization -->
+            <div class="main-idea-customizer">
+                <div class="customizer-section">
+                    <label class="customizer-label">📝 Main Idea Text:</label>
+                    <input 
+                        type="text" 
+                        class="customizer-input" 
+                        id="mainIdeaText" 
+                        placeholder="Enter your main idea..."
+                        value="Main Idea"
+                    >
+                </div>
+                
+                <div class="customizer-section">
+                    <label class="customizer-label">🎨 Choose Icon:</label>
+                    <div class="emoji-picker" id="emojiPicker">
+                        <button class="emoji-btn" onclick="selectEmoji('💡')">💡</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🎯')">🎯</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🚀')">🚀</button>
+                        <button class="emoji-btn" onclick="selectEmoji('⭐')">⭐</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🔥')">🔥</button>
+                        <button class="emoji-btn" onclick="selectEmoji('💎')">💎</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🌟')">🌟</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🎨')">🎨</button>
+                        <button class="emoji-btn" onclick="selectEmoji('📚')">📚</button>
+                        <button class="emoji-btn" onclick="selectEmoji('💻')">💻</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🌈')">🌈</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🎭')">🎭</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🎪')">🎪</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🎸')">🎸</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🎬')">🎬</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🏆')">🏆</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🌺')">🌺</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🦋')">🦋</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🌍')">🌍</button>
+                        <button class="emoji-btn" onclick="selectEmoji('🎓')">🎓</button>
+                    </div>
+                </div>
+
+                <div class="customizer-section">
+                    <label class="customizer-label">🎨 Choose Color Theme:</label>
+                    <div class="color-picker">
+                        <button class="color-btn" style="background: linear-gradient(135deg, #FD79A8, #FDCB6E);" onclick="selectColor('pink-yellow')"></button>
+                        <button class="color-btn" style="background: linear-gradient(135deg, #6C5CE7, #A29BFE);" onclick="selectColor('purple')"></button>
+                        <button class="color-btn" style="background: linear-gradient(135deg, #00B894, #00D2A0);" onclick="selectColor('green')"></button>
+                        <button class="color-btn" style="background: linear-gradient(135deg, #FF6B9D, #FFA07A);" onclick="selectColor('red')"></button>
+                        <button class="color-btn" style="background: linear-gradient(135deg, #74B9FF, #0984E3);" onclick="selectColor('blue')"></button>
+                        <button class="color-btn" style="background: linear-gradient(135deg, #FAB1A0, #E17055);" onclick="selectColor('orange')"></button>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="updateMainIdea()">
+                    ✨ Update Main Idea
+                </button>
+            </div>
+
+            <div class="mindmap-input-wrapper" style="margin-top: 2rem;">
+                <input 
+                    type="text" 
+                    class="task-input" 
+                    id="mindMapInput" 
+                    placeholder="Enter your idea or concept..."
+                    onkeypress="handleMindMapInput(event)"
+                    style="margin-bottom: 1.5rem;"
+                >
+            </div>
+
+            <div class="mindmap-canvas" id="mindMapCanvas">
+                <svg class="mindmap-connections" id="mindMapSVG">
+                    <!-- Connection lines will be drawn here -->
+                </svg>
+                <div class="mindmap-center-node">
+                    <div class="mindmap-node central" id="centralNode">
+                        <div class="node-content">💡 Main Idea</div>
+                    </div>
+                </div>
+                <div id="mindMapNodes"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
